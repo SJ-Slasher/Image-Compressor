@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Image Compressor Demo</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <h1>Image Compressor </h1>
+    <br>
+    <p class="muted">Upload a JPG/PNG/WebP image.</p></br>
+
+    <div class="card">
+      <form id="uploadForm">
+        <label class="file-label" for="fileInput">
+          <input type="file" name="file" id="fileInput" accept="image/*" required />
+          <div class="file-drop">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+              <path d="M12 3v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M8 7l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg><p></p>
+            <div>
+              <strong>Choose an image</strong>
+              <div class="muted">or drag & drop here (JPG/PNG/WebP)</div>
+            </div>
+          </div>
+        </label>
+
+        <div class="actions">
+          <button type="submit" id="submitBtn">Compress</button>
+          <div id="spinner" class="spinner hidden" aria-hidden></div>
+        </div>
+      </form>
+
+      <div id="result" class="hidden" style="margin-top:16px">
+        <h3>Results</h3>
+        <div class="row">
+          <div class="col">
+            <p><strong>Filename:</strong> <span id="filename"></span></p>
+            <p><strong>Original size:</strong> <span id="originalSize"></span></p>
+            <p><strong>Compressed size:</strong> <span id="compressedSize"></span></p>
+            <p><strong>Compression ratio (Original / Compressed):</strong> <span id="ratio"></span></p>
+            <p><a id="downloadLink" href="#" download>Download compressed file</a></p>
+          </div>
+          <div class="col">
+            <p><strong>Preview</strong></p>
+            <img id="preview" alt="Compressed preview" src="#" />
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <details>
+            <summary>Raw JSON response</summary>
+            <pre id="raw"></pre>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <script src="/script.js"></script>
+  </body>
+</html>
