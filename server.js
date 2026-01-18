@@ -29,6 +29,13 @@ app.post('/compress', upload.single('file'), async (req, res) => {
     const originalBuffer = req.file.buffer;
     const originalSize = originalBuffer.length;
 
+    // Read optional quality from multipart form (1-100). Multer populates req.body for fields.
+    let requestedQuality = 70;
+    if (req.body && req.body.quality) {
+      const q = parseInt(req.body.quality, 10);
+      if (!isNaN(q)) requestedQuality = Math.min(100, Math.max(10, q));
+    }
+
     // Use sharp to read metadata and preserve format
     const image = sharp(originalBuffer);
     const meta = await image.metadata();
@@ -43,15 +50,16 @@ app.post('/compress', upload.single('file'), async (req, res) => {
 
     // Choose compression strategy by format, but ensure output format remains the same
     if (format === 'jpeg' || format === 'jpg') {
-      // Re-encode JPEG with lower quality (lossy) to reduce size
-      compressedBuffer = await image.jpeg({ quality: 70, mozjpeg: true }).toBuffer();
+      // Re-encode JPEG with requested quality (lossy)
+      compressedBuffer = await image.jpeg({ quality: requestedQuality, mozjpeg: true }).toBuffer();
     } else if (format === 'png') {
-      // For PNG, use palette (quantize) + high compression level for smaller files while keeping .png
-      // palette: true produces an 8-bit paletted PNG (can be much smaller for photos with limited colors)
-      compressedBuffer = await image.png({ compressionLevel: 9, palette: true }).toBuffer();
+      // For PNG there isn't a direct 'quality' param like JPEG, so we use palette + compressionLevel
+      // Map requestedQuality (10-100) into compressionLevel (9-0) so lower quality -> higher compression.
+      const compressionLevel = Math.min(9, Math.max(0, Math.round((100 - requestedQuality) * 9 / 90)));
+      compressedBuffer = await image.png({ compressionLevel, palette: true }).toBuffer();
     } else if (format === 'webp') {
       // For WebP, reduce quality
-      compressedBuffer = await image.webp({ quality: 70 }).toBuffer();
+      compressedBuffer = await image.webp({ quality: requestedQuality }).toBuffer();
     }
 
     const compressedSize = compressedBuffer.length;
@@ -71,6 +79,7 @@ app.post('/compress', upload.single('file'), async (req, res) => {
       originalSize,
       compressedSize,
       ratio: ratio ? Number(ratio.toFixed(3)) : null,
+      requestedQuality,
       originalSizeHuman: formatBytes(originalSize),
       compressedSizeHuman: formatBytes(compressedSize),
       dataUrl

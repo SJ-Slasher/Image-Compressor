@@ -235,6 +235,28 @@ a:hover {
   text-decoration: underline;
 }
 
+/* Bigger, button-like download link for compressed image */
+.download-btn {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #7c3aed, #06b6d4);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.25);
+}
+
+.download-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* small preview shown after selecting a file */
+.uploaded-img {
+  max-width: 120px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
 /* ============================= */
 /*        Responsive             */
 /* ============================= */
