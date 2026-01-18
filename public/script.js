@@ -17,6 +17,7 @@ const qualityValue = document.getElementById('qualityValue');
 const uploadedPreview = document.getElementById('uploadedPreview');
 const requestedQualityEl = document.getElementById('requestedQuality');
 let _uploadedObjectUrl = null;
+let _downloadObjectUrl = null;
 
 // Update quality display when slider moves
 if (qualityRange && qualityValue) {
@@ -77,11 +78,14 @@ form.addEventListener('submit', async (e) => {
     preview.src = data.dataUrl;
   preview.alt = 'Compressed preview of ' + data.filename;
 
-    // Create a blob for download and set download filename keeping extension
-    const b = await (await fetch(data.dataUrl)).blob();
-    const url = URL.createObjectURL(b);
-    downloadLink.href = url;
-    downloadLink.download = data.filename; // keeps original name & extension
+  // Create a blob for download and set download filename keeping extension
+  const b = await (await fetch(data.dataUrl)).blob();
+  const url = URL.createObjectURL(b);
+  // revoke previous download URL if present
+  if (_downloadObjectUrl) URL.revokeObjectURL(_downloadObjectUrl);
+  _downloadObjectUrl = url;
+  downloadLink.href = url;
+  downloadLink.download = data.filename; // keeps original name & extension
 
     raw.textContent = JSON.stringify(data, null, 2);
     result.classList.remove('hidden');
